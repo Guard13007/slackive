@@ -2,6 +2,7 @@ lapis = require "lapis"
 
 import respond_to, json_params from require "lapis.application"
 import slack_token, error_channel, bot_name from require "secret"
+import const_compare from require "helpers"
 
 Messages = require "models.Messages"
 
@@ -24,7 +25,8 @@ class extends lapis.Application
                         icon_emoji: ":warning:"
                     }
                 }
-            if @params.token == slack_token --TODO REPLACE WITH CONST TIME COMPARE!
+
+            if const_compare @params.token, slack_token
                 message = Messages\create {
                     team_id: @params.team_id
                     team_domain: @params.team_domain
