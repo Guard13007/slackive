@@ -25,8 +25,8 @@ cd ..
 rm -rf openresty*
 rm -rf luarucks*
 cd slackive
-cp secret.moon.example secret.moon
-nano secret.moon   # Put the info needed in there!
+cp ./secret.moon.example ./secret.moon
+nano ./secret.moon   # Put the info needed in there!
 moonc .
 lapis migrate production
 lapis server production
