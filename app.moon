@@ -15,6 +15,15 @@ class extends lapis.Application
                     text " to see how to use this properly. :P"
 
         POST: json_params =>
+            unless @json
+                return {
+                    json: {
+                        channel: error_channel
+                        username: bot_name
+                        text: "Error: Improperly encoded JSON was received."
+                        icon_emoji: ":warning:"
+                    }
+                }
             if @params.token == slack_token --TODO REPLACE WITH CONST TIME COMPARE!
                 message = Messages\create {
                     team_id: @params.team_id
@@ -33,7 +42,8 @@ class extends lapis.Application
                             username: bot_name
                             text: "Error occured saving message from #{@paramd.user_name}:\n#{@params.text}\nSent at #{@params.timestamp} in #{@params.channel_name}."
                             icon_emoji: ":warning:"
-                        }}
+                        }
+                    }
             else
                 return status: 404 -- I dunno who you think you are
     }
