@@ -12,7 +12,7 @@ class extends lapis.Application
             @html ->
                 p ->
                     text "Please look at the "
-                    a href: "https://github.com/Guard13007/slackive", "readme"
+                    a href: "https://github.com/Guard13007/slackiver", "readme"
                     text " to see how to use this properly. :P"
 
         POST: json_params =>
