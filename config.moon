@@ -12,5 +12,5 @@ config "production", ->
     port 443
     num_workers 2
     code_cache "on"
-    ssl_cert ssl_cert
-    ssl_key ssl_key
+    --ssl_cert ssl_cert
+    --ssl_key ssl_key
