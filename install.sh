@@ -24,7 +24,7 @@ sudo luarocks install moonscript
 cd ..
 rm -rf openresty*
 rm -rf luarucks*
-cd slackive
+cd slackiver
 cp ./secret.moon.example ./secret.moon
 nano ./secret.moon   # Put the info needed in there!
 moonc .
