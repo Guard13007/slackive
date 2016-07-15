@@ -2,7 +2,7 @@
 
 # Prerequisites
 sudo apt-get update
-sudo apt-get install wget curl lua5.1 liblua5.1-0-dev unzip libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl make build-essential mysql-server -y   # Make sure you note your MySQL password!
+sudo apt-get install wget curl lua5.1 liblua5.1-0-dev unzip libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl make build-essential mysql-server libmysql++-dev -y   # Make sure you note your MySQL password!
 # OpenResty
 cd ..
 wget https://openresty.org/download/openresty-1.9.7.5.tar.gz   # Install a later version if available!
@@ -26,7 +26,7 @@ sudo luarocks install luasql-mysql MYSQL_INCDIR=/usr/include/mysql
 # cleanup
 cd ..
 rm -rf openresty*
-rm -rf luarucks*
+rm -rf luarocks*
 # okay now let's set it up
 cd slackiver
 cp secret.moon.example secret.moon
