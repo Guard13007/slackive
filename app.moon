@@ -7,6 +7,21 @@ import const_compare from require "helpers"
 Messages = require "models.Messages"
 
 class extends lapis.Application
+    [githook: "/githook"]: respond_to {
+        GET: =>
+            return status: 404
+        POST: json_params =>
+            if @params.ref == "refs/heads/master"
+                os.execute "echo \"Updating server...\" >> logs/updates.log"
+                os.execute "git pull origin >> logs/updates.log"
+                os.execute "moonc . >> logs/updates.log" -- NOTE this doesn't actually work, figure out correct stream to output to file
+                os.execute "lapis migrate production >> logs/updates.log"
+                os.execute "lapis build production >> logs/updates.log"
+                return { json: { status: "successful" } } -- yes, I know this doesn't actually check if it was successful yet
+            else
+                return { json: { status: "ignored non-master push" } }
+    }
+
     [update: "/update"]: respond_to {
         GET: =>
             @html ->
@@ -28,7 +43,7 @@ class extends lapis.Application
                     text: @params.text
                 }
                 --unless message
-                os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Error occured saving message from #{@params.user_name}:\\\n#{@params.text}\\\nSent at #{@params.timestamp} in #{@params.channel_name}.\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
+                return { json: { text: os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Error occured saving message from #{@params.user_name}:\\\n#{@params.text}\\\nSent at #{@params.timestamp} in #{@params.channel_name}.\", \"icon_emoji\": \":warning:\"}' #{slack_hook}" } }
             --else
             --    return status: 404 -- I dunno who you think you are
     }
