@@ -1,7 +1,7 @@
 lapis = require "lapis"
 
 import respond_to, json_params from require "lapis.application"
-import slack_token, error_channel, bot_name from require "secret"
+import slack_tokens, error_channel, bot_name from require "secret"
 import const_compare from require "helpers"
 
 Messages = require "models.Messages"
@@ -16,17 +16,7 @@ class extends lapis.Application
                     text " to see how to use this properly. :P"
 
         POST: json_params =>
-            unless @json
-                return {
-                    json: {
-                        channel: error_channel
-                        username: bot_name
-                        text: "Error: Improperly encoded JSON was received."
-                        icon_emoji: ":warning:"
-                    }
-                }
-
-            if const_compare @params.token, slack_token
+            if const_compare @params.token, slack_tokens
                 message = Messages\create {
                     team_id: @params.team_id
                     team_domain: @params.team_domain
@@ -38,16 +28,9 @@ class extends lapis.Application
                     text: @params.text
                 }
                 unless message
-                    return {
-                        json: {
-                            channel: error_channel
-                            username: bot_name
-                            text: "Error occured saving message from #{@paramd.user_name}:\n#{@params.text}\nSent at #{@params.timestamp} in #{@params.channel_name}."
-                            icon_emoji: ":warning:"
-                        }
-                    }
-            else
-                return status: 404 -- I dunno who you think you are
+                    os.execute 'curl -X POST --data-urlencode \'payload={"channel": "#slackiver", "username": "The Slackiver", "text": "Error occured saving message from #{@paramd.user_name}:\n#{@params.text}\nSent at #{@params.timestamp} in #{@params.channel_name}.", "icon_emoji": ":warning:"}\' slack_hook'
+            --else
+            --    return status: 404 -- I dunno who you think you are
     }
 
     [all: "/all"]: =>
