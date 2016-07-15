@@ -22,7 +22,7 @@ class extends lapis.Application
                 return { json: { status: "ignored non-master push" } }
     }
 
-    [update: "/update"]: respond_to {
+    [incoming: "/incoming"]: respond_to {
         GET: =>
             @html ->
                 p ->
