@@ -19,14 +19,20 @@ cd luarocks-2.3.0
 ./configure
 make build
 sudo make install
+# some rocks
 sudo luarocks install lapis
 sudo luarocks install moonscript
+sudo luarocks install luasql-mysql MYSQL_INCDIR=/usr/include/mysql
+# cleanup
 cd ..
 rm -rf openresty*
 rm -rf luarucks*
+# okay now let's set it up
 cd slackiver
-cp ./secret.moon.example ./secret.moon
-nano ./secret.moon   # Put the info needed in there!
+cp secret.moon.example secret.moon
+nano secret.moon   # Put the info needed in there!
 moonc .
+echo "Use MySQL's root password to get in, and then 'CREATE DATABASE slackiver;' and exit."
+mysql -u root -p
 lapis migrate production
 lapis server production

@@ -49,3 +49,16 @@ class extends lapis.Application
             else
                 return status: 404 -- I dunno who you think you are
     }
+
+    [all: "/all"]: =>
+        messages = Messages\select "ORDER BY timestamp DESC"
+        @html ->
+            if #messages > 0
+                element "table", ->
+                        for i in ipairs messages
+                            tr ->
+                                td messages[i].timestamp
+                                td messages[i].team_domain
+                                td messages[i].channel_name
+                                td messages[i].user_name
+                                td messages[i].text
