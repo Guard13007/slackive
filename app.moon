@@ -27,8 +27,8 @@ class extends lapis.Application
                     user_name: @params.user_name
                     text: @params.text
                 }
-                unless message
-                    os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Error occured saving message from #{@paramd.user_name}:\n#{@params.text}\nSent at #{@params.timestamp} in #{@params.channel_name}.\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
+                --unless message
+                os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Error occured saving message from #{@paramd.user_name}:\n#{@params.text}\nSent at #{@params.timestamp} in #{@params.channel_name}.\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
             --else
             --    return status: 404 -- I dunno who you think you are
     }
