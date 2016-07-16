@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Prerequisites
+echo "Please set up certificates before continuing."
+read -p " Press [Enter] to continue, or Ctrl+C to cancel."
 sudo apt-get update
 sudo apt-get install wget curl lua5.1 liblua5.1-0-dev unzip libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl make build-essential mysql-server libmysql++-dev -y   # Make sure you note your MySQL password!
 # OpenResty
@@ -32,7 +34,8 @@ cd slackiver
 cp secret.moon.example secret.moon
 nano secret.moon   # Put the info needed in there!
 moonc .
-echo "Use MySQL's root password to get in, and then 'CREATE DATABASE slackiver;' and exit."
+echo "Logging into MySQL (using root)..."
+echo "Do 'CREATE DATABASE slackiver;' then 'exit' !"
 mysql -u root -p
 lapis migrate production
 lapis server production
