@@ -50,7 +50,7 @@ class extends lapis.Application
                     text: @params.text
                 }
                 --unless message
-            human_date = os.date("%c", @params.timestamp\sub(1, @params.timestamp\find(".") - 1))
+            human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
             os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"(On #{@params.team_domain} (#{@params.team_id}))\\nError occured saving message from #{@params.user_name} (#{@params.user_id}):\\n#{@params.text}\\n(Sent at #{human_date} in #{@params.channel_name} (#{@params.channel_id}).)\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
             --else
             --    return status: 404 -- I dunno who you think you are
