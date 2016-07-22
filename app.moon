@@ -44,7 +44,7 @@ class extends lapis.Application
 
             if config.verbose
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
-                os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text\gsub("\\", "\\\\")\gsub("\\'", "\\\\'")\gsub("\"", "\\\"")}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]\", \"icon_emoji\": \":information_source:\"}' #{slack_hook}"
+                os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text\gsub("\\", "\\\\")\gsub("'", "&apos;")\gsub("\"", "\\\"")}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]\", \"icon_emoji\": \":information_source:\"}' #{slack_hook}"
 
             message = Messages\create {
                 team_id: @params.team_id
