@@ -13,7 +13,7 @@ config {"production", "development"}, ->
     ssl_cert ssl_cert
     ssl_key ssl_key
 
-config "production"
+config "production", ->
     code_cache "on"
     mysql ->
         database "slackiver"
