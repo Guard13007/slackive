@@ -12,7 +12,7 @@ class extends lapis.Application
             return status: 405 --Method Not Allowed
 
         POST: json_params =>
-            unless @params.ref ~= nil
+            if @params.ref == nil
                 return { json: { status: "invalid request" } }, status: 400 --Bad Request
 
             if @params.ref == "refs/heads/master"
@@ -22,7 +22,7 @@ class extends lapis.Application
                 result and= 0 == os.execute "lapis migrate production >> logs/updates.log"
                 result and= 0 == os.execute "lapis build production >> logs/updates.log"
                 if result
-                    return { json: { status: "successful" } }
+                    return { json: { status: "successful", message: "server updated to latest version" } }
                 else
                     return { json: { status: "failure", message: "check logs/updates.log"} }, status: 500 --Internal Server Error
             else
