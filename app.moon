@@ -1,7 +1,8 @@
 lapis = require "lapis"
+config = require("lapis.config").get!
 
 import respond_to, json_params from require "lapis.application"
-import slack_tokens, slack_hook, error_channel, bot_name from require "secret"
+import slack_tokens, error_channel, bot_name from require "secret"
 import const_compare from require "helpers"
 
 Messages = require "models.Messages"
@@ -38,22 +39,27 @@ class extends lapis.Application
                     text " to see how to use this properly. :P"
 
         POST: json_params =>
-            if const_compare @params.token, slack_tokens
-                message = Messages\create {
-                    team_id: @params.team_id
-                    team_domain: @params.team_domain
-                    channel_id: @params.channel_id
-                    channel_name: @params.channel_name
-                    timestamp: @params.timestamp
-                    user_id: @params.user_id
-                    user_name: @params.user_name
-                    text: @params.text
-                }
+            unless const_compare @params.token, slack_tokens
+                return status: 401 --Unauthorized
+
+            if config.debug
+                human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
+                msg_slack "Saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]", ":information_source:"
+
+            message = Messages\create {
+                team_id: @params.team_id
+                team_domain: @params.team_domain
+                channel_id: @params.channel_id
+                channel_name: @params.channel_name
+                timestamp: @params.timestamp
+                user_id: @params.user_id
+                user_name: @params.user_name
+                text: @params.text
+            }
+
             unless message
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
-                os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Error saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
-            else
-                return status: 401 --Unauthorized
+                msg_slack "Error saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]"
     }
 
     [all: "/all"]: =>
