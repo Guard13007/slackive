@@ -19,7 +19,7 @@ config "production", ->
         database "slackiver"
 
 config "development", ->
-    debug true
+    verbose true
     code_cache "off"
     mysql ->
         database "slackiver_dev"

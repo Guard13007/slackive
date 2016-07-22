@@ -42,7 +42,7 @@ class extends lapis.Application
             unless const_compare @params.token, slack_tokens
                 return status: 401 --Unauthorized
 
-            if config.debug
+            if config.verbose
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
                 msg_slack "Saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]", ":information_source:"
 
