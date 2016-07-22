@@ -12,6 +12,7 @@ const_compare: (string1, string2) ->
     return not fail
 
 msg_slack: (msg, emoji=":warning:") ->
+    --TODO test strings with ', they may need to be escaped as \\'
     os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#{error_channel}\", \"username\": \"#{bot_name}\", \"text\": \"#{msg}\", \"icon_emoji\": \"#{emoji}\"}' #{slack_hook}"
 
 return {
