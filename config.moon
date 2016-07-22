@@ -22,4 +22,4 @@ config "development", ->
     debug true
     code_cache "off"
     mysql ->
-        database "slackiver-dev"
+        database "slackiver_dev"
