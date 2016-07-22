@@ -10,8 +10,8 @@ config {"production", "development"}, ->
         password sql_password
     port 9443
     num_workers 2
-    ssl_cert ssl_cert
-    ssl_key ssl_key
+    cert ssl_cert
+    cert_key ssl_key
 
 config "production", ->
     code_cache "on"
