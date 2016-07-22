@@ -1,9 +1,8 @@
 lapis = require "lapis"
-config = require("lapis.config").get!
 
 import respond_to, json_params from require "lapis.application"
-import slack_tokens from require "secret"
-import const_compare, msg_slack from require "helpers"
+import slack_tokens, slack_hook, error_channel, bot_name from require "secret"
+import const_compare from require "helpers"
 
 Messages = require "models.Messages"
 
@@ -13,7 +12,7 @@ class extends lapis.Application
             return status: 405 --Method Not Allowed
 
         POST: json_params =>
-            if @params.ref == nil
+            unless @params.ref ~= nil
                 return { json: { status: "invalid request" } }, status: 400 --Bad Request
 
             if @params.ref == "refs/heads/master"
@@ -23,7 +22,7 @@ class extends lapis.Application
                 result and= 0 == os.execute "lapis migrate production >> logs/updates.log"
                 result and= 0 == os.execute "lapis build production >> logs/updates.log"
                 if result
-                    return { json: { status: "successful", message: "server updated to latest version" } }
+                    return { json: { status: "successful" } }
                 else
                     return { json: { status: "failure", message: "check logs/updates.log"} }, status: 500 --Internal Server Error
             else
@@ -39,27 +38,22 @@ class extends lapis.Application
                     text " to see how to use this properly. :P"
 
         POST: json_params =>
-            unless const_compare @params.token, slack_tokens
-                return status: 401 --Unauthorized
-
-            if config.verbose
-                human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
-                msg_slack "Saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]", ":information_source:"
-
-            message = Messages\create {
-                team_id: @params.team_id
-                team_domain: @params.team_domain
-                channel_id: @params.channel_id
-                channel_name: @params.channel_name
-                timestamp: @params.timestamp
-                user_id: @params.user_id
-                user_name: @params.user_name
-                text: @params.text
-            }
-
+            if const_compare @params.token, slack_tokens
+                message = Messages\create {
+                    team_id: @params.team_id
+                    team_domain: @params.team_domain
+                    channel_id: @params.channel_id
+                    channel_name: @params.channel_name
+                    timestamp: @params.timestamp
+                    user_id: @params.user_id
+                    user_name: @params.user_name
+                    text: @params.text
+                }
             unless message
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
-                msg_slack "Error saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]"
+                os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Error saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
+            else
+                return status: 401 --Unauthorized
     }
 
     [all: "/all"]: =>
