@@ -2,8 +2,8 @@ lapis = require "lapis"
 config = require("lapis.config").get!
 
 import respond_to, json_params from require "lapis.application"
-import slack_tokens, error_channel, bot_name from require "secret"
-import const_compare from require "helpers"
+import slack_tokens from require "secret"
+import const_compare, msg_slack from require "helpers"
 
 Messages = require "models.Messages"
 
