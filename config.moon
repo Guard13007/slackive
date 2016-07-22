@@ -9,7 +9,7 @@ config "production", ->
         user sql_user
         password sql_password
         database "slackiver"
-    port 443
+    port 9443
     num_workers 2
     code_cache "on"
     --ssl_cert ssl_cert
