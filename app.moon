@@ -49,11 +49,11 @@ class extends lapis.Application
                     user_name: @params.user_name
                     text: @params.text
                 }
-                --unless message
+            unless message
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
                 os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#slackiver\", \"username\": \"The Slackiver\", \"text\": \"Error saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):\\n#{@params.text}\\n[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
-            --else
-            --    return status: 401 --Unauthorized
+            else
+                return status: 401 --Unauthorized
     }
 
     [all: "/all"]: =>
