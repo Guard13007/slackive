@@ -1,3 +1,5 @@
+-- 🍕
+
 lapis = require "lapis"
 config = require("lapis.config").get!
 
