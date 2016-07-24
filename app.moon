@@ -15,6 +15,9 @@ class extends lapis.Application
             return status: 405 --Method Not Allowed
 
         POST: json_params =>
+            unless config.githook
+                return status: 401 --Unauthorized
+
             if @params.ref == nil
                 return { json: { status: "invalid request" } }, status: 400 --Bad Request
 

@@ -10,8 +10,10 @@ config {"production", "development"}, ->
         password sql_password
     port 9443
     num_workers 2
+    -- custom config keys
     cert ssl_cert
     cert_key ssl_key
+    githook true
 
 config "production", ->
     code_cache "on"
