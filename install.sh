@@ -25,6 +25,7 @@ sudo make install
 sudo luarocks install lapis
 sudo luarocks install moonscript
 sudo luarocks install luasql-mysql MYSQL_INCDIR=/usr/include/mysql
+sudo luarocks install bcrypt
 # cleanup
 cd ..
 rm -rf openresty*
