@@ -4,8 +4,8 @@ lapis = require "lapis"
 config = require("lapis.config").get!
 
 import respond_to, json_params from require "lapis.application"
-import slack_hook, error_channel, bot_name from require "secret"
-import verify_token from require "helpers"
+import slack_hook, error_channel, bot_name, ignored_names from require "secret"
+import verify_token, str_in_table from require "helpers"
 
 Messages = require "models.Messages"
 
@@ -37,17 +37,13 @@ class extends lapis.Application
 
     [incoming: "/incoming"]: respond_to {
         GET: =>
-            @html ->
-                p ->
-                    text "Please look at the "
-                    a href: "https://github.com/Guard13007/slackiver", "readme"
-                    text " to see how to use this properly. :P"
+            return status: 405 --Method Not Allowed
 
         POST: json_params =>
             unless verify_token @params.token
                 return status: 401 --Unauthorized
 
-            if config.verbose
+            if config.verbose and not str_in_table @params.user_name, ignored_names
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
                 os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#{error_channel}\", \"username\": \"#{bot_name}\", \"text\": \"*Saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):*\\n#{@params.text\gsub("\\", "\\\\")\gsub("'", "’")\gsub("\"", "\\\"")}\\n*[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]*\", \"icon_emoji\": \":information_source:\"}' #{slack_hook}"
 
@@ -62,7 +58,7 @@ class extends lapis.Application
                 text: @params.text
             }
 
-            unless message
+            if not message and not str_in_table @params.user_name, ignored_names
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
                 os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#{error_channel}\", \"username\": \"#{bot_name}\", \"text\": \"*Error saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):*\\n#{@params.text\gsub("\\", "\\\\")\gsub("'", "’")\gsub("\"", "\\\"")}\\n*[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]*\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
     }

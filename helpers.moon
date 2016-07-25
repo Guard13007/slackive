@@ -22,7 +22,15 @@ verify_token = (token) ->
 
     return success
 
+str_in_table = (str1, tab) ->  --@params.user_name, ignored_names
+    for str2 in *tab
+        if str1 == str2
+            return true
+
+    return false
+
 return {
     :const_compare
     :verify_token
+    :str_in_table
 }
