@@ -40,3 +40,4 @@ echo "Do 'CREATE DATABASE slackiver;' then 'exit' !"
 mysql -u root -p
 lapis migrate production
 lapis server production
+echo "(Don't forget to proxy or pass to port 9443!)"

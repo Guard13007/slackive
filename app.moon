@@ -44,8 +44,8 @@ class extends lapis.Application
                     text " to see how to use this properly. :P"
 
         POST: json_params =>
-            unless verify_token @params.token
-                return status: 401 --Unauthorized
+            --unless verify_token @params.token
+            --    return status: 401 --Unauthorized
 
             if config.verbose
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
