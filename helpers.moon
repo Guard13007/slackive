@@ -1,6 +1,6 @@
 import slack_tokens from require "secret"
 
-const_compare: (string1, string2) ->
+const_compare = (string1, string2) ->
     local fail, dummy
 
     for i = 1,100
@@ -11,12 +11,16 @@ const_compare: (string1, string2) ->
 
     return not fail
 
-verify_token: (token) ->
+verify_token = (token) ->
+    local success, dummy
+
     for t in *slack_tokens
         if const_compare t, token
-            return true
+            success = true
+        else
+            dummy = true -- done to make execution time equal
 
-    return false
+    return success
 
 return {
     :const_compare
