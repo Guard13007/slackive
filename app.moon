@@ -44,8 +44,7 @@ class extends lapis.Application
                     text " to see how to use this properly. :P"
 
         POST: json_params =>
-            tok = slack_tokens[1]
-            unless const_compare @params.token, tok
+            unless verify_token(@params.token, slack_tokens)
                 return status: 401 --Unauthorized
 
             if config.verbose
