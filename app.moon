@@ -81,5 +81,5 @@ class extends lapis.Application
                                 td messages[i].text
 
     [test: "/test"]: =>
-        verify_token @params.token
+        verify_token "wowshit"
         return status: 200
