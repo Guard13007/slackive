@@ -12,15 +12,11 @@ const_compare: (string1, string2) ->
     return not fail
 
 verify_token: (token) ->
-    local success, dummy
-
     for t in *slack_tokens
         if const_compare t, token
-            success = true
-        else
-            dummy = true
+            return true
 
-    return success
+    return false
 
 return {
     :const_compare
