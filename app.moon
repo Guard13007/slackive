@@ -5,7 +5,7 @@ config = require("lapis.config").get!
 
 import respond_to, json_params from require "lapis.application"
 import slack_hook, error_channel, bot_name, ignored_names from require "secret"
-import verify_token, str_in_table from require "helpers"
+import verify_token from require "helpers"
 
 Messages = require "models.Messages"
 
@@ -43,7 +43,7 @@ class extends lapis.Application
             unless verify_token @params.token
                 return status: 401 --Unauthorized
 
-            if config.verbose and not str_in_table @params.user_name, ignored_names
+            if config.verbose and not @params.user_name == "slackbot"
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
                 os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#{error_channel}\", \"username\": \"#{bot_name}\", \"text\": \"*Saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):*\\n#{@params.text\gsub("\\", "\\\\")\gsub("'", "’")\gsub("\"", "\\\"")}\\n*[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]*\", \"icon_emoji\": \":information_source:\"}' #{slack_hook}"
 
@@ -58,7 +58,7 @@ class extends lapis.Application
                 text: @params.text
             }
 
-            if not message and not str_in_table @params.user_name, ignored_names
+            if not message and not @params.user_name == "slackbot"
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
                 os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#{error_channel}\", \"username\": \"#{bot_name}\", \"text\": \"*Error saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):*\\n#{@params.text\gsub("\\", "\\\\")\gsub("'", "’")\gsub("\"", "\\\"")}\\n*[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]*\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
     }
@@ -75,7 +75,3 @@ class extends lapis.Application
                                 td messages[i].channel_name
                                 td messages[i].user_name
                                 td messages[i].text
-
-    [test: "/test"]: =>
-        verify_token "wowshit"
-        return status: 200
