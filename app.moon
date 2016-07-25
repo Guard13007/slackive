@@ -1,15 +1,22 @@
 -- 🍕
 
 lapis = require "lapis"
+csrf = require "lapis.csrf"
 config = require("lapis.config").get!
+
+crypto = require "crypto"
+bcrypt = require "bcrypt"
 
 import respond_to, json_params from require "lapis.application"
 import slack_hook, error_channel, bot_name, ignored_names from require "secret"
 import verify_token from require "helpers"
 
 Messages = require "models.Messages"
+Users = require "models.Users"
 
 class extends lapis.Application
+    layout: "layout"
+
     [githook: "/githook"]: respond_to {
         GET: =>
             return status: 405 --Method Not Allowed
@@ -75,3 +82,73 @@ class extends lapis.Application
                                 td messages[i].channel_name
                                 td messages[i].user_name
                                 td messages[i].text
+
+    [create_user: "/create_user"]: respond_to {
+        GET: =>
+            csrf_token = csrf.generate_token @
+            @html ->
+                form {
+                    action: "/create_user"
+                    method: "POST"
+                    enctype: "multipart/form-data"
+                }, ->
+                    p "Username: "
+                    input type: "text", name: "user"
+                    p "Password: "
+                    input type: "password", name: "password"
+                    br!
+                    input type: "hidden", name: "csrf_token", value: csrf_token
+
+        POST: =>
+            csrf.assert_token @
+            salt = crypto.pkey.generate("rsa", 4096)\to_pem!
+            digest = bcrypt.digest @params.password .. salt, config.digest_rounds
+
+            user, errMsg = Users\create {
+                name: @params.user
+                salt: salt
+                digest: digest
+            }
+
+            if user
+                @session.id = user.id
+                return redirect_to: @url_for "index"
+            else
+                return errMsg
+    }
+
+    [login: "/login"]: respond_to {
+        GET: =>
+            csrf_token = csrf.generate_token @
+            @html ->
+                form {
+                    action: "/login"
+                    method: "POST"
+                    enctype: "multipart/form-data"
+                }, ->
+                    p "Username: "
+                    input type: "text", name: "user"
+                    p "Password: "
+                    input type: "password", name: "password"
+                    br!
+                    input type: "hidden", name: "csrf_token", value: csrf_token
+                    input type: "submit"
+
+        POST: =>
+            csrf.assert_token @
+            if user = Users\find name: @params.user
+                if bcrypt.verify @params.password .. user.salt, user.digest
+                    @session.id = user.id
+
+            return redirect_to: @url_for "index"
+    }
+
+    [logout: "/logout"]: =>
+        @session.id = nil
+        return redirect_to: @url_for "index"
+
+    [name_message_list: "/:team_name/:channel_name(/:page[%d])"]: =>
+        --/team_name/channel_name/page
+
+    [id_message_list: "/id/:team_id/:channel_id(/:page[%d])"]: =>
+        --/team_id/channel_id/page

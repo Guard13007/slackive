@@ -13,6 +13,15 @@ import create_table, types from require "lapis.db.schema"
             {"user_name", types.text}
             {"text", types.text}
         }
+
+    [2]: =>
+        create_table "users", {
+            {"id", types.id primary_key: true}
+            {"salt", types.text}
+            {"digest", types.digest}
+
+            {"perm_view", types.boolean default: false}
+        }
 }
 
 -- Example from slack:
