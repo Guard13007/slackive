@@ -15,7 +15,7 @@ verify_token: (token) ->
     success = false
 
     for t in *slack_tokens
-        success = success or const_compare t, token
+        success = const_compare(t, token) or success
 
     return success
 
