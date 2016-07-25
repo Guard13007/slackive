@@ -12,10 +12,13 @@ const_compare: (string1, string2) ->
     return not fail
 
 verify_token: (token) ->
-    success = false
+    local success, dummy
 
     for t in *slack_tokens
-        success = const_compare(t, token) or success
+        if const_compare t, token
+            success = true
+        else
+            dummy = true
 
     return success
 
