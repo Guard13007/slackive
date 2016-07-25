@@ -21,7 +21,7 @@ import create_table, types from require "lapis.db.schema"
             {"salt", types.text}
             {"digest", types.digest}
 
-            {"perm_view", types.boolean default: false}
+            {"perm_view", types.boolean default: false} -- whether or not user has permission to view logs
         }
 }
 
