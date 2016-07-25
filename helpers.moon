@@ -1,5 +1,3 @@
-import slack_tokens from require "secret"
-
 const_compare: (string1, string2) ->
     local fail, dummy
 
@@ -11,7 +9,7 @@ const_compare: (string1, string2) ->
 
     return not fail
 
-verify_token: (token) ->
+verify_token: (token, slack_tokens) ->
     for t in *slack_tokens
         if const_compare t, token
             return true
