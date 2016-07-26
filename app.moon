@@ -20,7 +20,7 @@ class extends lapis.Application
 
     [githook: "/githook"]: respond_to {
         GET: =>
-            return status: 405 --Method Not Allowed
+            return status: 405, "Method Not Allowed"
 
         POST: json_params =>
             unless config.githook
@@ -45,7 +45,7 @@ class extends lapis.Application
 
     [incoming: "/incoming"]: respond_to {
         GET: =>
-            return status: 405 --Method Not Allowed
+            return status: 405, "Method Not Allowed"
 
         POST: json_params =>
             unless verify_token @params.token
