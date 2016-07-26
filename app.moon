@@ -217,34 +217,3 @@ class extends lapis.Application
                 return render: "messages"
 
             return status: 401, "Unauthorized"
-
-    [search: "/search"]: respond_to {
-        GET: =>
-            if @session.id
-                user = Users\find id: @session.id
-                if user.perm_view == 1
-                    @html ->
-                        form {
-                            action: "/login"
-                            method: "POST"
-                            enctype: "multipart/form-data"
-                        }, ->
-                            text "Query: "
-                            input type: "text", name: "query"
-                            br!
-                            input type: "submit"
-
-            --return status: 401, "Unauthorized"
-
-        POST: =>
-            if @session.id
-                user = Users\find id: @session.id
-                if user.perm_view == 1
-                    --results = Messages\select "WHERE text = $$?$$::tsvector", @params.query --silly PostgreSQL
-                    --results = Messages\select "WHERE text LIKE ?", @params.query
-                    results = Messages\select [db.raw "WHERE text LIKE ?"]: @params.query
-                    if results
-                        @html -> p "It works?"
-
-            return status: 401, "Unauthorized"
-    }
