@@ -240,7 +240,7 @@ class extends lapis.Application
             if @session.id
                 user = Users\find id: @session.id
                 if user.perm_view == 1
-                    results = Messages\select "WHERE text = $$?$$::tsvector;", @params.query
+                    results = Messages\select "WHERE text = $$?$$::tsvector", @params.query
                     if results
                         @html -> p "It works?"
 
