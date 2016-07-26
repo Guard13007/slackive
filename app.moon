@@ -8,7 +8,7 @@ crypto = require "crypto"
 bcrypt = require "bcrypt"
 
 import respond_to, json_params from require "lapis.application"
-import slack_hook, error_channel, bot_name, team_domain from require "secret"
+import slack_hook, error_channel, bot_name from require "secret"
 import verify_token from require "helpers"
 
 Messages = require "models.Messages"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o errexit   # exit on error
+
 # Prerequisites
 echo "Please set up certificates before continuing."
 read -p " Press [Enter] to continue, or Ctrl+C to cancel."
@@ -38,7 +40,24 @@ nano secret.moon   # Put the info needed in there!
 moonc .
 echo "Logging into MySQL (using root)..."
 echo "Do 'CREATE DATABASE slackiver;' then 'exit' !"
+echo "(& 'slackiver_dev' if you plan to use development environment)"
 mysql -u root -p
 lapis migrate production
-lapis server production
+# Slackiver as a service
+echo "[Unit]
+Description=Slackiver server
+
+[Service]
+Type=forking
+WorkingDirectory=$(pwd)
+ExecStart=$(which lapis) server production
+ExecReload=$(which lapis) build production
+ExecStop=$(which lapis) term
+
+[Install]
+WantedBy=multi-user.target" > slackiver.service
+cp ./slackiver.service /etc/systemd/system/slackiver.service
+sudo systemctl daemon-reload
+sudo systemctl enable guard13007com.service
+service guard13007com start
 echo "(Don't forget to proxy or pass to port 9443!)"
