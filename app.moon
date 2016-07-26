@@ -71,6 +71,7 @@ class extends lapis.Application
     }
 
     [index: "/"]: =>
+        --NOTE this is temporary
         messages = Messages\select "ORDER BY timestamp ASC"
         @html ->
             if #messages > 0
@@ -85,6 +86,9 @@ class extends lapis.Application
 
     [create_user: "/create_user"]: respond_to {
         GET: =>
+            if @session.id
+                return redirect_to: @url_for "index"
+
             csrf_token = csrf.generate_token @
             @html ->
                 form {
@@ -99,12 +103,6 @@ class extends lapis.Application
                     br!
                     input type: "hidden", name: "csrf_token", value: csrf_token
                     input type: "submit"
-                if @session.id
-                    user = Users\find id: @session.id
-                    p user.id
-                    p user.name
-                    p user.digest
-                    p user.salt
 
         POST: =>
             csrf.assert_token @
@@ -129,6 +127,9 @@ class extends lapis.Application
 
     [login: "/login"]: respond_to {
         GET: =>
+            if @session.id
+                return redirect_to: @url_for "index"
+
             csrf_token = csrf.generate_token @
             @html ->
                 form {
@@ -157,8 +158,23 @@ class extends lapis.Application
         @session.id = nil
         return redirect_to: @url_for "index"
 
-    --[name_message_list: "/:team_name/:channel_name(/:page[%d])"]: =>
+    [name_message_list: "/:team_name/:channel_name(/:page[%d])"]: =>
         --/team_name/channel_name/page
+        page = tonumber(@params.page) or 1
+
+        Paginator = Messages\paginated "WHERE team_name = ? AND channel_name = ? ORDER BY timestamp ASC", @params.team_name, @params.channel_name, per_page: 100
+        messages = Paginator\get_page page
+
+        @html ->
+            ul ->
+                element "table", ->
+                        for i in ipairs messages
+                            tr ->
+                                td messages[i].timestamp
+                                td messages[i].team_domain
+                                td messages[i].channel_name
+                                td messages[i].user_name
+                                td messages[i].text
 
     --[id_message_list: "/id/:team_id/:channel_id(/:page[%d])"]: =>
         --/team_id/channel_id/page
