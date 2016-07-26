@@ -101,6 +101,9 @@ class extends lapis.Application
 
         POST: =>
             csrf.assert_token @
+            if #@params.password < 8
+                return "Your password must be at least 8 characters long."
+
             salt = crypto.pkey.generate("rsa", 4096)\to_pem!
             digest = bcrypt.digest @params.password .. salt, config.digest_rounds
 
@@ -147,8 +150,8 @@ class extends lapis.Application
         @session.id = nil
         return redirect_to: @url_for "index"
 
-    [name_message_list: "/:team_name/:channel_name(/:page[%d])"]: =>
+    --[name_message_list: "/:team_name/:channel_name(/:page[%d])"]: =>
         --/team_name/channel_name/page
 
-    [id_message_list: "/id/:team_id/:channel_id(/:page[%d])"]: =>
+    --[id_message_list: "/id/:team_id/:channel_id(/:page[%d])"]: =>
         --/team_id/channel_id/page

@@ -17,7 +17,7 @@ import create_table, types from require "lapis.db.schema"
     [2]: =>
         create_table "users", {
             {"id", types.id primary_key: true}
-            {"name", types.text unique: true}
+            {"name", types.varchar unique: true}
             {"salt", types.text}
             {"digest", types.digest}
 

@@ -14,7 +14,7 @@ config {"production", "development"}, ->
     cert ssl_cert
     cert_key ssl_key
     githook true
-    digest_rounds 10 --TODO CHANGE THIS
+    digest_rounds 8
 
 config "production", ->
     code_cache "on"

@@ -14,4 +14,6 @@ class extends html.Widget
                     if @session.id
                         a href: @url_for("logout"), "log out"
                     else
+                        a href: @url_for("create_user"), "make account"
+                        text " | "
                         a href: @url_for("login"), "sign in"
