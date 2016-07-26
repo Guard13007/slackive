@@ -16,6 +16,6 @@ class Users extends Model
                 return "That username is already taken."
 
             lower = value\lower!
-            if (lower == "admin") or (lower == "administrator") or (lower == "new")
+            if (lower == "admin") or (lower == "administrator") or (lower == "new") or (lower == "edit")
                 return "That username is already taken."
     }

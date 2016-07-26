@@ -10,6 +10,7 @@ bcrypt = require "bcrypt"
 import respond_to, json_params from require "lapis.application"
 import slack_hook, error_channel, bot_name from require "secret"
 import verify_token from require "helpers"
+import escape, unescape from require "lapis.util"
 
 Messages = require "models.Messages"
 Users = require "models.Users"
@@ -23,7 +24,7 @@ class extends lapis.Application
 
         POST: json_params =>
             unless config.githook
-                return status: 401 --Unauthorized
+                return status: 401, "Unauthorized"
 
             if @params.ref == nil
                 return { json: { status: "invalid request" } }, status: 400 --Bad Request
@@ -48,7 +49,7 @@ class extends lapis.Application
 
         POST: json_params =>
             unless verify_token @params.token
-                return status: 401 --Unauthorized
+                return status: 401, "Unauthorized"
 
             if config.verbose and not @params.user_name == "slackbot"
                 human_date = os.date("%c", tonumber(@params.timestamp\sub(1, @params.timestamp\find(".") - 1)))
@@ -163,7 +164,7 @@ class extends lapis.Application
                 @messages = Paginator\get_page page
                 return render: "messages"
 
-        return status: 401 --Unauthorized
+        return status: 401, "Unauthorized"
 
     [name_message_list: "/:team_domain/:channel_name(/:page[%d])"]: =>
         if @session.id
@@ -176,7 +177,7 @@ class extends lapis.Application
                 @messages = Paginator\get_page page
                 return render: "messages"
 
-        return status: 401 --Unauthorized
+        return status: 401, "Unauthorized"
 
     [id_message_list: "/id/:team_id/:channel_id(/:page[%d])"]: =>
         if @session.id
@@ -189,7 +190,7 @@ class extends lapis.Application
                 @messages = Paginator\get_page page
                 return render: "messages"
 
-        return status: 401 --Unauthorized
+        return status: 401, "Unauthorized"
 
     [short_name_message_list: "/:channel_name(/:page[%d])"]: =>
         if @session.id
@@ -202,7 +203,7 @@ class extends lapis.Application
                 @messages = Paginator\get_page page
                 return render: "messages"
 
-        return status: 401 --Unauthorized
+        return status: 401, "Unauthorized"
 
     [short_id_message_list: "/id/:channel_id(/:page[%d])"]: =>
         if @session.id
@@ -215,4 +216,33 @@ class extends lapis.Application
                 @messages = Paginator\get_page page
                 return render: "messages"
 
-            return status: 401 --Unauthorized
+            return status: 401, "Unauthorized"
+
+    [search: "/search"]: respond_to {
+        GET: =>
+            if @session.id
+                user = Users\find id: @session.id
+                if user.perm_view == 1
+                    @html ->
+                        form {
+                            action: "/login"
+                            method: "POST"
+                            enctype: "multipart/form-data"
+                        }, ->
+                            text "Query: "
+                            input type: "text", name: "query"
+                            br!
+                            input type: "submit"
+
+            return status: 401, "Unauthorized"
+
+        POST: =>
+            if @session.id
+                user = Users\find id: @session.id
+                if user.perm_view == 1
+                    results = Messages\select "WHERE text = $$?$$::tsvector;", @params.query
+                    if results
+                        @html -> p "It works?"
+
+            return status: 401, "Unauthorized"
+    }
