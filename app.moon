@@ -8,7 +8,7 @@ crypto = require "crypto"
 bcrypt = require "bcrypt"
 
 import respond_to, json_params from require "lapis.application"
-import slack_hook, error_channel, bot_name, team_domain from require "secret"
+import slack_hook, error_channel, bot_name from require "secret"
 import verify_token from require "helpers"
 
 Messages = require "models.Messages"
@@ -71,18 +71,8 @@ class extends lapis.Application
     }
 
     [index: "/"]: =>
-        --NOTE this is temporary
-        messages = Messages\select "ORDER BY timestamp ASC"
-        @html ->
-            if #messages > 0
-                element "table", ->
-                        for i in ipairs messages
-                            tr ->
-                                td messages[i].timestamp
-                                td messages[i].team_domain
-                                td messages[i].channel_name
-                                td messages[i].user_name
-                                td messages[i].text
+        p "Welcome to Slackiver."
+        --TODO have actual useful stuff here if someone is logged in
 
     [create_user: "/create_user"]: respond_to {
         GET: =>
@@ -158,26 +148,41 @@ class extends lapis.Application
         @session.id = nil
         return redirect_to: @url_for "index"
 
-    [name_message_list: "(/:team_domain)/:channel_name(/:page[%d])"]: =>
-        unless @session.id
-            return status: 401 --Unauthorized
+    [all: "/all(/:page[%d])"]: =>
+        if @session.id
+            user = Users\find id: @session.id
+            if user.perm_view
+                page = tonumber(@params.page) or 1
 
-        page = tonumber(@params.page) or 1
-        domain = @params.team_domain or team_domain
+                Paginator = Messages\paginated "ORDER BY timestamp ASC", per_page: 100
 
-        Paginator = Messages\paginated "WHERE team_domain = ? AND channel_name = ? ORDER BY timestamp ASC", domain, @params.channel_name, per_page: 100
-        messages = Paginator\get_page page
+                @messages = Paginator\get_page page
+                return render: "messages"
 
-        @html ->
-            ul ->
-                element "table", ->
-                        for i in ipairs messages
-                            tr ->
-                                td messages[i].timestamp
-                                td messages[i].team_domain
-                                td messages[i].channel_name
-                                td messages[i].user_name
-                                td messages[i].text
+        return status: 401 --Unauthorized
 
-    --[id_message_list: "/id/:team_id/:channel_id(/:page[%d])"]: =>
-        --/team_id/channel_id/page
+    [name_message_list: "/:team_domain/:channel_name(/:page[%d])"]: =>
+        if @session.id
+            user = Users\find id: @session.id
+            if user.perm_view
+                page = tonumber(@params.page) or 1
+
+                Paginator = Messages\paginated "WHERE team_domain = ? AND channel_name = ? ORDER BY timestamp ASC", @params.team_domain, @params.channel_name, per_page: 100
+
+                @messages = Paginator\get_page page
+                render: "messages"
+
+        return status: 401 --Unauthorized
+
+    [id_message_list: "/id/:team_id/:channel_id(/:page[%d])"]: =>
+        if @session.id
+            user = Users\find id: @session.id
+            if user.perm_view
+                page = tonumber(@params.page) or 1
+
+                Paginator = Messages\paginated "WHERE team_id = ? AND channel_id = ? ORDER BY timestamp ASC", @params.team_id, @params.channel_id, per_page: 100
+
+                @messages = Paginator\get_page page
+                render: "messages"
+
+        return status: 401 --Unauthorized
