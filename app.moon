@@ -8,7 +8,7 @@ crypto = require "crypto"
 bcrypt = require "bcrypt"
 
 import respond_to, json_params from require "lapis.application"
-import slack_hook, error_channel, bot_name, ignored_names from require "secret"
+import slack_hook, error_channel, bot_name, team_domain from require "secret"
 import verify_token from require "helpers"
 
 Messages = require "models.Messages"
@@ -158,11 +158,14 @@ class extends lapis.Application
         @session.id = nil
         return redirect_to: @url_for "index"
 
-    [name_message_list: "/:team_name/:channel_name(/:page[%d])"]: =>
-        --/team_name/channel_name/page
-        page = tonumber(@params.page) or 1
+    [name_message_list: "(/:team_domain)/:channel_name(/:page[%d])"]: =>
+        unless @session.id
+            return status: 401 --Unauthorized
 
-        Paginator = Messages\paginated "WHERE team_name = ? AND channel_name = ? ORDER BY timestamp ASC", @params.team_name, @params.channel_name, per_page: 100
+        page = tonumber(@params.page) or 1
+        domain = @params.team_domain or team_domain
+
+        Paginator = Messages\paginated "WHERE team_domain = ? AND channel_name = ? ORDER BY timestamp ASC", domain, @params.channel_name, per_page: 100
         messages = Paginator\get_page page
 
         @html ->
