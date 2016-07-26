@@ -159,8 +159,8 @@ class extends lapis.Application
                 page = tonumber(@params.page) or 1
 
                 Paginator = Messages\paginated "ORDER BY timestamp ASC", per_page: 50
-                if page > Paginator\num_pages!
-                    return redirect_to: @url_for "all", page: Paginator\num_pages!
+                --if page > Paginator\num_pages!
+                --    return redirect_to: @url_for "all", page: Paginator\num_pages!
 
                 @show_channel = true
                 @messages = Paginator\get_page page
@@ -175,8 +175,8 @@ class extends lapis.Application
                 page = tonumber(@params.page) or 1
 
                 Paginator = Messages\paginated "WHERE team_domain = ? AND channel_name = ? ORDER BY timestamp ASC", @params.team_domain, @params.channel_name, per_page: 50
-                if page > Paginator\num_pages!
-                    return redirect_to: @url_for "name_message_list", team_domain: @params.team_domain, channel_name: @params.channel_name, page: Paginator\num_pages!
+                --if page > Paginator\num_pages!
+                --    return redirect_to: @url_for "name_message_list", team_domain: @params.team_domain, channel_name: @params.channel_name, page: Paginator\num_pages!
 
                 @messages = Paginator\get_page page
                 return render: "messages"
@@ -190,8 +190,8 @@ class extends lapis.Application
                 page = tonumber(@params.page) or 1
 
                 Paginator = Messages\paginated "WHERE team_id = ? AND channel_id = ? ORDER BY timestamp ASC", @params.team_id, @params.channel_id, per_page: 50
-                if page > Paginator\num_pages!
-                    return redirect_to: @url_for "id_message_list", team_id: @params.team_id, channel_id: @params.channel_id, page: Paginator\num_pages!
+                --if page > Paginator\num_pages!
+                --    return redirect_to: @url_for "id_message_list", team_id: @params.team_id, channel_id: @params.channel_id, page: Paginator\num_pages!
 
                 @messages = Paginator\get_page page
                 return render: "messages"
@@ -205,8 +205,8 @@ class extends lapis.Application
                 page = tonumber(@params.page) or 1
 
                 Paginator = Messages\paginated "WHERE channel_name = ? ORDER BY timestamp ASC", @params.channel_name, per_page: 50
-                if page > Paginator\num_pages!
-                    return redirect_to: @url_for "short_name_message_list", channel_name: @params.channel_name, page: Paginator\num_pages!
+                --if page > Paginator\num_pages!
+                --    return redirect_to: @url_for "short_name_message_list", channel_name: @params.channel_name, page: Paginator\num_pages!
 
                 @messages = Paginator\get_page page
                 return render: "messages"
@@ -220,8 +220,8 @@ class extends lapis.Application
                 page = tonumber(@params.page) or 1
 
                 Paginator = Messages\paginated "WHERE channel_id = ? ORDER BY timestamp ASC", @params.channel_id, per_page: 50
-                if page > Paginator\num_pages!
-                    return redirect_to: @url_for "short_id_message_list", channel_id: @params.channel_id, page: Paginator\num_pages!
+                --if page > Paginator\num_pages!
+                --    return redirect_to: @url_for "short_id_message_list", channel_id: @params.channel_id, page: Paginator\num_pages!
 
                 @messages = Paginator\get_page page
                 return render: "messages"
