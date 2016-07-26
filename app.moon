@@ -8,7 +8,7 @@ crypto = require "crypto"
 bcrypt = require "bcrypt"
 
 import respond_to, json_params from require "lapis.application"
-import slack_hook, error_channel, bot_name from require "secret"
+import slack_hook, error_channel, bot_name, team_domain from require "secret"
 import verify_token from require "helpers"
 
 Messages = require "models.Messages"
@@ -157,7 +157,7 @@ class extends lapis.Application
             if user.perm_view == 1
                 page = tonumber(@params.page) or 1
 
-                Paginator = Messages\paginated "ORDER BY timestamp ASC", per_page: 100
+                Paginator = Messages\paginated "ORDER BY timestamp ASC", per_page: 50
 
                 @show_channel = true
                 @messages = Paginator\get_page page
@@ -171,7 +171,7 @@ class extends lapis.Application
             if user.perm_view == 1
                 page = tonumber(@params.page) or 1
 
-                Paginator = Messages\paginated "WHERE team_domain = ? AND channel_name = ? ORDER BY timestamp ASC", @params.team_domain, @params.channel_name, per_page: 100
+                Paginator = Messages\paginated "WHERE team_domain = ? AND channel_name = ? ORDER BY timestamp ASC", @params.team_domain, @params.channel_name, per_page: 50
 
                 @messages = Paginator\get_page page
                 return render: "messages"
@@ -184,16 +184,35 @@ class extends lapis.Application
             if user.perm_view == 1
                 page = tonumber(@params.page) or 1
 
-                Paginator = Messages\paginated "WHERE team_id = ? AND channel_id = ? ORDER BY timestamp ASC", @params.team_id, @params.channel_id, per_page: 100
+                Paginator = Messages\paginated "WHERE team_id = ? AND channel_id = ? ORDER BY timestamp ASC", @params.team_id, @params.channel_id, per_page: 50
 
                 @messages = Paginator\get_page page
                 return render: "messages"
 
         return status: 401 --Unauthorized
 
-    --[short_name_message_list: "/:channel_name(/:page[%d])"]: =>
-        --if @session.id
-        --TODO
+    [short_name_message_list: "/:channel_name(/:page[%d])"]: =>
+        if @session.id
+            user = Users\find id: @session.id
+            if user.perm_view == 1
+                page = tonumber(@params.page) or 1
 
-    --[short_id_message_list: "/id/:channel_id(/:page[%d])"]: =>
-        --TODO
+                Paginator = Messages\paginated "WHERE channel_name = ? ORDER BY timestamp ASC", @params.channel_name, per_page: 50
+
+                @messages = Paginator\get_page page
+                return render: "messages"
+
+        return status: 401 --Unauthorized
+
+    [short_id_message_list: "/id/:channel_id(/:page[%d])"]: =>
+        if @session.id
+            user = Users\find id: @session.id
+            if user.perm_view == 1
+                page = tonumber(@params.page) or 1
+
+                Paginator = Messages\paginated "WHERE channel_id = ? ORDER BY timestamp ASC", @params.channel_id, per_page: 50
+
+                @messages = Paginator\get_page page
+                return render: "messages"
+
+            return status: 401 --Unauthorized
