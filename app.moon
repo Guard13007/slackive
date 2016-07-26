@@ -170,7 +170,7 @@ class extends lapis.Application
                 Paginator = Messages\paginated "WHERE team_domain = ? AND channel_name = ? ORDER BY timestamp ASC", @params.team_domain, @params.channel_name, per_page: 100
 
                 @messages = Paginator\get_page page
-                render: "messages"
+                return render: "messages"
 
         return status: 401 --Unauthorized
 
@@ -183,6 +183,6 @@ class extends lapis.Application
                 Paginator = Messages\paginated "WHERE team_id = ? AND channel_id = ? ORDER BY timestamp ASC", @params.team_id, @params.channel_id, per_page: 100
 
                 @messages = Paginator\get_page page
-                render: "messages"
+                return render: "messages"
 
         return status: 401 --Unauthorized
