@@ -71,7 +71,10 @@ class extends lapis.Application
     }
 
     [index: "/"]: =>
-        @html -> p "Welcome to Slackiver."
+        @html ->
+            p "Welcome to Slackiver."
+            user = Users\find id: @session.id
+            p user.perm_view .. ""
         --TODO have actual useful stuff here if someone is logged in
 
     [create_user: "/create_user"]: respond_to {
@@ -156,6 +159,7 @@ class extends lapis.Application
 
                 Paginator = Messages\paginated "ORDER BY timestamp ASC", per_page: 100
 
+                @show_channel = true
                 @messages = Paginator\get_page page
                 return render: "messages"
 
@@ -186,3 +190,10 @@ class extends lapis.Application
                 return render: "messages"
 
         return status: 401 --Unauthorized
+
+    --[short_name_message_list: "/:channel_name(/:page[%d])"]: =>
+        --if @session.id
+        --TODO
+
+    --[short_id_message_list: "/id/:channel_id(/:page[%d])"]: =>
+        --TODO
