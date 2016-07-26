@@ -70,7 +70,7 @@ class extends lapis.Application
                 os.execute "curl -X POST --data-urlencode 'payload={\"channel\": \"#{error_channel}\", \"username\": \"#{bot_name}\", \"text\": \"*Error saving message from @#{@params.user_name} (#{@params.user_id}) on #{@params.team_domain}.slack.com (#{@params.team_id}):*\\n#{@params.text\gsub("\\", "\\\\")\gsub("'", "’")\gsub("\"", "\\\"")}\\n*[Sent #{human_date} in ##{@params.channel_name} (#{@params.channel_id})]*\", \"icon_emoji\": \":warning:\"}' #{slack_hook}"
     }
 
-    [all: "/all"]: =>
+    [index: "/"]: =>
         messages = Messages\select "ORDER BY timestamp ASC"
         @html ->
             if #messages > 0
@@ -98,6 +98,7 @@ class extends lapis.Application
                     input type: "password", name: "password"
                     br!
                     input type: "hidden", name: "csrf_token", value: csrf_token
+                    input type: "submit"
 
         POST: =>
             csrf.assert_token @
