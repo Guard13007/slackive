@@ -71,7 +71,7 @@ class extends lapis.Application
     }
 
     [index: "/"]: =>
-        p "Welcome to Slackiver."
+        @html -> p "Welcome to Slackiver."
         --TODO have actual useful stuff here if someone is logged in
 
     [create_user: "/create_user"]: respond_to {
