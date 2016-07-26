@@ -2,4 +2,5 @@
 logs/
 *_temp/
 nginx.conf.compiled
+slackiver.service
 secret.moon

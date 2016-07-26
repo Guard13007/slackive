@@ -56,8 +56,8 @@ ExecStop=$(which lapis) term
 
 [Install]
 WantedBy=multi-user.target" > slackiver.service
-cp ./slackiver.service /etc/systemd/system/slackiver.service
+sudo cp ./slackiver.service /etc/systemd/system/slackiver.service
 sudo systemctl daemon-reload
-sudo systemctl enable guard13007com.service
-service guard13007com start
+sudo systemctl enable slackiver.service
+service slackiver start
 echo "(Don't forget to proxy or pass to port 9443!)"
