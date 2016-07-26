@@ -234,7 +234,7 @@ class extends lapis.Application
                             br!
                             input type: "submit"
 
-            return status: 401, "Unauthorized"
+            --return status: 401, "Unauthorized"
 
         POST: =>
             if @session.id
