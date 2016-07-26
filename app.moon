@@ -99,6 +99,12 @@ class extends lapis.Application
                     br!
                     input type: "hidden", name: "csrf_token", value: csrf_token
                     input type: "submit"
+                if @session.id
+                    user = Users\find id: @session.id
+                    p user.id
+                    p user.name
+                    p user.digest
+                    p user.salt
 
         POST: =>
             csrf.assert_token @
