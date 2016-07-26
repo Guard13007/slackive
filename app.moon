@@ -73,8 +73,8 @@ class extends lapis.Application
     [index: "/"]: =>
         @html ->
             p "Welcome to Slackiver."
-            user = Users\find id: @session.id
-            p user.perm_view .. ""
+            --user = Users\find id: @session.id
+            --p user.perm_view .. ""
         --TODO have actual useful stuff here if someone is logged in
 
     [create_user: "/create_user"]: respond_to {
@@ -154,7 +154,7 @@ class extends lapis.Application
     [all: "/all(/:page[%d])"]: =>
         if @session.id
             user = Users\find id: @session.id
-            if user.perm_view
+            if user.perm_view == 1
                 page = tonumber(@params.page) or 1
 
                 Paginator = Messages\paginated "ORDER BY timestamp ASC", per_page: 100
@@ -168,7 +168,7 @@ class extends lapis.Application
     [name_message_list: "/:team_domain/:channel_name(/:page[%d])"]: =>
         if @session.id
             user = Users\find id: @session.id
-            if user.perm_view
+            if user.perm_view == 1
                 page = tonumber(@params.page) or 1
 
                 Paginator = Messages\paginated "WHERE team_domain = ? AND channel_name = ? ORDER BY timestamp ASC", @params.team_domain, @params.channel_name, per_page: 100
@@ -181,7 +181,7 @@ class extends lapis.Application
     [id_message_list: "/id/:team_id/:channel_id(/:page[%d])"]: =>
         if @session.id
             user = Users\find id: @session.id
-            if user.perm_view
+            if user.perm_view == 1
                 page = tonumber(@params.page) or 1
 
                 Paginator = Messages\paginated "WHERE team_id = ? AND channel_id = ? ORDER BY timestamp ASC", @params.team_id, @params.channel_id, per_page: 100
