@@ -3,4 +3,5 @@ logs/
 *_temp/
 nginx.conf.compiled
 slackiver.service
+dhparams.pem
 secret.moon

@@ -6,7 +6,7 @@ set -o errexit   # exit on error
 echo "Please set up certificates before continuing."
 read -p " Press [Enter] to continue, or Ctrl+C to cancel."
 sudo apt-get update
-sudo apt-get install wget curl lua5.1 liblua5.1-0-dev unzip libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl make build-essential mysql-server libmysql++-dev -y   # Make sure you note your MySQL password!
+sudo apt-get install wget curl lua5.1 liblua5.1-0-dev unzip libreadline-dev libncurses5-dev libpcre3-dev openssl libssl-dev perl make build-essential mysql-server libmysql++-dev -y   # Make sure you note your MySQL password!
 # OpenResty
 cd ..
 wget https://openresty.org/download/openresty-1.9.7.5.tar.gz   # Install a later version if available!
@@ -35,6 +35,7 @@ rm -rf openresty*
 rm -rf luarocks*
 # okay now let's set it up
 cd slackiver
+openssl dhparam -out dhparams.pem 2048
 cp secret.moon.example secret.moon
 nano secret.moon   # Put the info needed in there!
 moonc .
