@@ -4,6 +4,8 @@ set -o errexit   # exit on error
 
 # Prerequisites
 echo "Please set up certificates before continuing."
+echo "( wget https://dl.eff.org/certbot-auto"
+echo "  chmod a+x certbot-auto )"
 read -p " Press [Enter] to continue, or Ctrl+C to cancel."
 sudo apt-get update
 sudo apt-get install wget curl lua5.1 liblua5.1-0-dev unzip libreadline-dev libncurses5-dev libpcre3-dev openssl libssl-dev perl make build-essential mysql-server libmysql++-dev -y   # Make sure you note your MySQL password!
