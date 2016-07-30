@@ -35,6 +35,8 @@ rm -rf openresty*
 rm -rf luarocks*
 # okay now let's set it up
 cd slackiver
+git submodule init
+git submodule update
 openssl dhparam -out dhparams.pem 2048
 cp secret.moon.example secret.moon
 nano secret.moon   # Put the info needed in there!
