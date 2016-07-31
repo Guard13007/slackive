@@ -46,9 +46,9 @@ class extends lapis.Application
 
             if user
                 @session.id = user.id
-                if Users\count! == 1
+                if Users\count! < 2
                     user\update {
-                        perm_view: true --true (note true/false are numbers in MySQL but boolean in PostgreSQL)
+                        perm_view: 1 --true (note true/false are numbers in MySQL but boolean in PostgreSQL)
                     }
                 return redirect_to: @url_for "index"
             else
