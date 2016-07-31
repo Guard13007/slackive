@@ -48,7 +48,7 @@ class extends lapis.Application
                 @session.id = user.id
                 if Users\count! == 1
                     user\update {
-                        perm_view: 1 --true (note true/false are numbers in MySQL but boolean in PostgreSQL)
+                        perm_view: true --true (note true/false are numbers in MySQL but boolean in PostgreSQL)
                     }
                 return redirect_to: @url_for "index"
             else
@@ -122,7 +122,7 @@ class extends lapis.Application
             elseif @params.delete
                 if user\delete!
                     @session.id = nil
-                    return "Your account has been deleted."
+                    return @url_for "index"   --"Your account has been deleted."
                 else
                     return status: 500, "Error deleting your account."
 
