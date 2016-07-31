@@ -46,7 +46,7 @@ class extends lapis.Application
 
             if user
                 @session.id = user.id
-                if Users\count! < 2
+                if tonumber(Users\count!) < 2
                     user\update {
                         perm_view: 1 --true (note true/false are numbers in MySQL but boolean in PostgreSQL)
                     }

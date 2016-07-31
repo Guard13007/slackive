@@ -54,7 +54,7 @@ class extends lapis.Application
             if @session.id
                 user = Users\find id: @session.id
                 p user.perm_view .. ""
-                p Users\count! .. ""
+            p Users\count! .. ""
         --TODO have actual useful stuff here if someone is logged in
 
     [all: "/all(/:page[%d])"]: =>
