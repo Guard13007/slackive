@@ -11,6 +11,7 @@ class extends html.Widget
             body ->
                 @content_for "inner"
 
+                hr!
                 div class: "footer", ->
                     if @session.id
                         a class: "pure-button", href: @url_for("user_edit"), "modify user"
