@@ -5,6 +5,7 @@ class extends html.Widget
         html_5 ->
             head ->
                 title @title or "Slackiver"
+                link rel: "stylesheet", href: @build_url "static/css/pure-min.css"
                 link rel: "stylesheet", href: @build_url "static/css/slackiver.css"
                 --script src: @build_url "static/js/jquery-3.1.0.min.js"
             body ->

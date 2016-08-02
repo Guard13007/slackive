@@ -12,13 +12,13 @@ import slack_hook, error_channel, bot_name from require "secret"
 import verify_token from require "helpers"
 
 Messages = require "models.Messages"
-Users = require "models.Users"
+Users = require "users.models.Users"
 
 class extends lapis.Application
     layout: "layout"
 
     @include "githook/githook"
-    @include "users"
+    @include "users/users"
 
     [incoming: "/incoming"]: respond_to {
         GET: =>
