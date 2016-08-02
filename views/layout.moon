@@ -13,10 +13,10 @@ class extends html.Widget
 
                 div class: "footer", ->
                     if @session.id
-                        a href: @url_for("modify_user"), "modify user"
+                        a href: @url_for("user_edit"), "modify user"
                         text " | "
-                        a href: @url_for("logout"), "log out"
+                        a href: @url_for("user_logout"), "log out"
                     else
-                        a href: @url_for("create_user"), "make account"
+                        a href: @url_for("user_new"), "make account"
                         text " | "
-                        a href: @url_for("login"), "sign in"
+                        a href: @url_for("user_login"), "sign in"
